@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'dbbackup',  # https://github.com/jazzband/django-dbbackup
 
     'course',  # local app
+    'sample_course'
 ]
 
 MIDDLEWARE = [
@@ -90,7 +91,7 @@ if (SETTINGS_DIR / 'db/ext_databases.py').exists():
 
 # DB routing
 # https://docs.djangoproject.com/en/4.1/topics/db/multi-db/
-DATABASE_ROUTERS = ['BaCa2.routing.SimpleCourseRouter']
+DATABASE_ROUTERS = ['course.routing.SimpleCourseRouter']
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

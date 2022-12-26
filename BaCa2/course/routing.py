@@ -1,3 +1,6 @@
+from django.db.models import Manager
+
+
 class SimpleCourseRouter:
 
     def test_course_db(self, model, **hints):
@@ -21,4 +24,12 @@ class SimpleCourseRouter:
         return False
 
 
-# class CourseRouter(SimpleCourseRouter):
+class SpecificDBManager(Manager):
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        # if `use_db` is set on model use that for choosing the DB
+        if hasattr(self.model, 'use_db'):
+            qs = qs.using(self.model.use_db)
+
+        return qs

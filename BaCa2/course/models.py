@@ -4,8 +4,11 @@ from django.db.models import Count
 from BaCa2.choices import TaskJudgingMode, ResultStatus
 from BaCa2.exceptions import ModelValidationError, DataError
 from BaCa2.settings import BASE_DIR
+from course.routing import SpecificDBManager
 
 SUBMITS_DIR = BASE_DIR / 'submits'
+
+DB = ''
 
 
 # "A round is a period of time in which a tasks can be submitted."
@@ -17,6 +20,11 @@ SUBMITS_DIR = BASE_DIR / 'submits'
 # * deadline_date: The date and time when the round ends for submitting.
 # * reveal_date: The date and time when the round results will be visible for everyone.
 class Round(models.Model):
+    objects = SpecificDBManager
+
+    class Meta:
+        abstract = True
+
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(null=True)
     deadline_date = models.DateTimeField()
@@ -34,9 +42,15 @@ class Round(models.Model):
 
 
 class Task(models.Model):
+    objects = SpecificDBManager
+
+
+    class Meta:
+        abstract = True
+
     package_instance = models.IntegerField()  # TODO: add foreign key
     task_name = models.CharField(max_length=1023)
-    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    round = models.ForeignKey(f'{DB}.Round', on_delete=models.CASCADE)
     judging_mode = models.CharField(
         max_length=3,
         choices=TaskJudgingMode.choices,
@@ -50,7 +64,12 @@ class Task(models.Model):
 
 
 class TestSet(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    objects = SpecificDBManager
+
+    class Meta:
+        abstract = True
+
+    task = models.ForeignKey(f'{DB}.Task', on_delete=models.CASCADE)
     short_name = models.CharField(max_length=255)
     weight = models.FloatField()
 
@@ -59,8 +78,13 @@ class TestSet(models.Model):
 
 
 class Test(models.Model):
+    objects = SpecificDBManager
+
+    class Meta:
+        abstract = True
+
     short_name = models.CharField(max_length=255)
-    test_set = models.ForeignKey(TestSet, on_delete=models.CASCADE)
+    test_set = models.ForeignKey(f'{DB}.TestSet', on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Test {self.pk}: Test/set/task: " \
@@ -69,9 +93,14 @@ class Test(models.Model):
 
 # It's a model for a submit. It has a submit date, source code, task, user id, and final score
 class Submit(models.Model):
+    objects = SpecificDBManager
+
+    class Meta:
+        abstract = True
+
     submit_date = models.DateTimeField(auto_now_add=True)
     source_code = models.FileField(upload_to=SUBMITS_DIR)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    task = models.ForeignKey(f'{DB}.Task', on_delete=models.CASCADE)
     usr = models.FloatField()  # TODO: user id
     final_score = models.FloatField(default=-1)
 
@@ -152,8 +181,13 @@ class Submit(models.Model):
 
 # `Result` is a class that represents a result of a test for a given submit and task (test set)
 class Result(models.Model):  # TODO: +pola z kolejki
-    test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    submit = models.ForeignKey(Submit, on_delete=models.CASCADE)
+    objects = SpecificDBManager
+
+    class Meta:
+        abstract = True
+
+    test = models.ForeignKey(f'{DB}.Test', on_delete=models.CASCADE)
+    submit = models.ForeignKey(f'{DB}.Submit', on_delete=models.CASCADE)
     status = models.CharField(
         max_length=3,
         choices=ResultStatus.choices,
