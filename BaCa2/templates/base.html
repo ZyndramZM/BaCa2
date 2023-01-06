@@ -1,10 +1,40 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>{% block title %}BaCa2 System{% endblock %}</title>
+    <!-- CSS files -->
+    {% block css_all %}
+        {% comment %}<link href="{% static 'tabler/core/dist/js/tabler.min.js' %}" rel="stylesheet"/>
+        <link href="{% static 'tabler/core/dist/css/tabler-flags.min.css' %}" rel="stylesheet"/>
+        <link href="{% static 'tabler/core/dist/css/tabler-vendors.min.css' %}" rel="stylesheet"/>{% endcomment %}
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/css/tabler.min.css">
+
+        {% block css %}{% endblock %}
+    {% endblock %}
 </head>
 <body>
+{% block body %}
+    {% block navigation %}
+        <!-- TODO: Navigation header -->
+    {% endblock %}
 
+    {% block content %}{% endblock %}
+{% endblock %}
+{% block scripts_all %}
+    {% comment %}<!-- Libs JS -->
+    <script src="{% static 'node_modules/tabler/dist/libs/apexcharts/dist/apexcharts.min.js' %}"></script>
+
+    <!-- Tabler core -->
+    <script src="{% static 'node_modules/tabler/dist/js/tabler.min.js' %}"></script>{% endcomment %}
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@latest/dist/js/tabler.min.js"></script>
+
+    {% block scripts %}{% endblock %}
+{% endblock %}
 </body>
 </html>
